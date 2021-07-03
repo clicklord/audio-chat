@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  mongo:
+    image: mongo:4.4.5-bionic
+    container_name: mongodb
+    env_file:
+      - .env
+    ports:
+      - ${DC_MONGO_PORTS}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DC_MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DC_MONGO_PASS}
+    networks:
+      - mongodb-net
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongoadmin
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    ports:
+      - ${DC_MONGO_ADMIN_PORTS}
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DC_MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DC_MONGO_PASS}
+      ME_CONFIG_BASICAUTH_USERNAME: ${DC_MONGO_ADMIN_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${DC_MONGO_ADMIN_PASS}
+    networks:
+      - mongodb-net
+
+  audio-chat:
+    network_mode: host
+    container_name: audio-chat
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: ${ENV_TARGET}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    depends_on:
+      - mongo
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+      - 9229:9229 #debug port
+    env_file:
+      - .env
+
+networks:
+  mongodb-net:
+    driver: bridge
