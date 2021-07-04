@@ -6,18 +6,16 @@ import {
   HttpCode,
   Post,
   Query,
-  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { FastifyRequest } from 'fastify';
 
-import { USER_COOKIE_NAME } from 'src/shared/config';
 import { AuthGuard } from 'src/shared/guards';
 import { IUserCookie } from 'src/shared/interface';
 import { ChatsService } from './chats.service';
 import { DeleteByIdsDto, UpsertChatForUserDto } from './dto';
+import { GetUserFromCookie } from './decorators';
 import { IChatShortInfo } from './interfaces';
 
 @ApiTags('chat')
@@ -29,14 +27,11 @@ export class ChatsController {
   @Post('/user/upsert')
   @HttpCode(200)
   async upsert(
-    @Req() request: FastifyRequest,
     @Body() params: UpsertChatForUserDto,
+    @GetUserFromCookie() curentUser: IUserCookie,
   ): Promise<IChatShortInfo> {
-    const curentUserId = (
-      JSON.parse(request.cookies[USER_COOKIE_NAME]) as unknown as IUserCookie
-    ).id;
     const upsertedId = await this.chatsService.upsertOneForUser(
-      curentUserId,
+      curentUser.id,
       params,
     );
     const foundChat = await this.chatsService.findById(upsertedId);
@@ -50,12 +45,9 @@ export class ChatsController {
 
   @Get('/user/list')
   async chatsForUser(
-    @Req() request: FastifyRequest,
+    @GetUserFromCookie() curentUser: IUserCookie,
   ): Promise<IChatShortInfo[]> {
-    const curentUserId = (
-      JSON.parse(request.cookies[USER_COOKIE_NAME]) as unknown as IUserCookie
-    ).id;
-    const foundChats = await this.chatsService.findByUserId(curentUserId);
+    const foundChats = await this.chatsService.findByUserId(curentUser.id);
     return foundChats.map((val) => {
       return {
         id: val._id,

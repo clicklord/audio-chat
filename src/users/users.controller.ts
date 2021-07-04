@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { FindAllByIdsDto } from './dto';
@@ -11,7 +11,9 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('list')
-  async userList(@Query() params: FindAllByIdsDto): Promise<UserShortInfo[]> {
+  async userList(
+    @Query(ValidationPipe) params: FindAllByIdsDto,
+  ): Promise<UserShortInfo[]> {
     return await this.usersService.findByIds(params);
   }
 }

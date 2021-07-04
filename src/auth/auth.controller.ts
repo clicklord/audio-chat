@@ -2,15 +2,17 @@ import { Body, Controller, Get, HttpCode, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 
-import { USER_COOKIE_NAME } from 'src/shared/config';
-import { IUserCookie } from 'src/shared/interface';
+import { CookieHelper } from 'src/shared/utils';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto, RegisterDto } from './dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private cookieHelper: CookieHelper,
+  ) {}
 
   @Post('register')
   @HttpCode(200)
@@ -19,16 +21,9 @@ export class AuthController {
     @Body() params: RegisterDto,
   ): Promise<string> {
     const newUser = await this.usersService.registerNewUser(params);
-
-    const cookieValue: IUserCookie = {
+    this.cookieHelper.setUserCookie(response, {
       id: newUser._id,
       login: newUser.login,
-    };
-    // TODO: move to common module
-    response.setCookie(USER_COOKIE_NAME, JSON.stringify(cookieValue), {
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
     });
 
     return newUser._id;
@@ -42,15 +37,9 @@ export class AuthController {
   ): Promise<string> {
     const newUser = await this.usersService.findByLogin(params.login);
 
-    const cookieValue: IUserCookie = {
+    this.cookieHelper.setUserCookie(response, {
       id: newUser._id,
       login: newUser.login,
-    };
-    // TODO: move to common module
-    response.setCookie(USER_COOKIE_NAME, JSON.stringify(cookieValue), {
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
     });
 
     return newUser._id;
@@ -61,12 +50,7 @@ export class AuthController {
   async logOut(
     @Res({ passthrough: true }) response: FastifyReply,
   ): Promise<void> {
-    // TODO: move to common module
-    response.setCookie(USER_COOKIE_NAME, '', {
-      httpOnly: true,
-      path: '/',
-      maxAge: 0,
-    });
+    this.cookieHelper.clearUserCookie(response);
 
     return;
   }

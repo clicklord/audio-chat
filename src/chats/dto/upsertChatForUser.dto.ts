@@ -1,5 +1,12 @@
-import { ArrayUnique, IsArray, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  ArrayUnique,
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ChatType } from '../enums';
 
 export class UpsertChatForUserDto {
   @ApiProperty()
@@ -18,5 +25,6 @@ export class UpsertChatForUserDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsIn(Object.keys(ChatType))
   readonly chatType: string;
 }
