@@ -8,6 +8,7 @@ Draft audio chat backend
 - in admin panel create new db voice-chat
 - restart services `npm run dc:stop && npm run dc:up`
 - remove services `npm run dc:remove`
+- you can find methods list on [http://{backendhost}:{backendport}/api](http://localhost:3030/api)
 
 
 you can find another commands in package.json

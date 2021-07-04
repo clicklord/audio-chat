@@ -1,10 +1,13 @@
 import { Body, Controller, Get, HttpCode, Post, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+
 import { USER_COOKIE_NAME } from 'src/shared/config';
 import { IUserCookie } from 'src/shared/interface';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto, RegisterDto } from './dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private usersService: UsersService) {}

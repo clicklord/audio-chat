@@ -10,7 +10,9 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
+
 import { USER_COOKIE_NAME } from 'src/shared/config';
 import { AuthGuard } from 'src/shared/guards';
 import { IUserCookie } from 'src/shared/interface';
@@ -18,6 +20,7 @@ import { ChatsService } from './chats.service';
 import { DeleteByIdsDto, UpsertChatForUserDto } from './dto';
 import { IChatShortInfo } from './interfaces';
 
+@ApiTags('chat')
 @Controller('chat')
 @UseGuards(AuthGuard)
 export class ChatsController {
