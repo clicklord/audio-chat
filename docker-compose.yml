@@ -44,9 +44,6 @@ services:
     command: npm run start:dev
     depends_on:
       - mongo
-    ports:
-      - ${APP_PORT}:${APP_PORT}
-      - 9229:9229 #debug port
     env_file:
       - .env
 
