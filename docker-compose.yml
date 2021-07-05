@@ -37,11 +37,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: ${ENV_TARGET}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run start:dev
     depends_on:
       - mongo
     env_file:
