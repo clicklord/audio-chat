@@ -1,13 +1,9 @@
-version: '3.7'
-
 services:
   mongo:
-    image: mongo:4.4.5-bionic
+    image: mongo:4.4.6-bionic
     container_name: mongodb
     env_file:
       - .env
-    ports:
-      - ${DC_MONGO_PORTS}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DC_MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DC_MONGO_PASS}
@@ -22,7 +18,7 @@ services:
     env_file:
       - .env
     ports:
-      - ${DC_MONGO_ADMIN_PORTS}
+      - 127.0.0.1:${DC_MONGO_ADMIN_PORTS}
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DC_MONGO_USERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DC_MONGO_PASS}
@@ -31,16 +27,19 @@ services:
     networks:
       - mongodb-net
 
-  audio-chat:
-    network_mode: host
-    container_name: audio-chat
+  audio-chat-service:
+    container_name: audio-chat-service
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile.dev
     depends_on:
       - mongo
+    ports:
+      - 127.0.0.1:${APP_PORT}:${APP_PORT}
     env_file:
       - .env
+    networks:
+      - mongodb-net
 
 networks:
   mongodb-net:
