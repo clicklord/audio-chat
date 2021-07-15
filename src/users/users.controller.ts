@@ -1,5 +1,7 @@
 import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { IServerResponse } from 'src/shared/interface';
+import { ServerResponseHelper } from 'src/shared/utils';
 
 import { FindAllByIdsDto } from './dto';
 import { UserShortInfo } from './interfaces';
@@ -13,7 +15,9 @@ export class UsersController {
   @Get('list')
   async userList(
     @Query(ValidationPipe) params: FindAllByIdsDto,
-  ): Promise<UserShortInfo[]> {
-    return await this.usersService.findByIds(params);
+  ): Promise<IServerResponse<UserShortInfo[]>> {
+    return ServerResponseHelper.createSuccessResponse<UserShortInfo[]>(
+      await this.usersService.findByIds(params),
+    );
   }
 }

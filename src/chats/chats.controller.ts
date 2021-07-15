@@ -12,11 +12,12 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from 'src/shared/guards';
-import { IUserCookie } from 'src/shared/interface';
+import { IServerResponse, IUserCookie } from 'src/shared/interface';
 import { ChatsService } from './chats.service';
 import { DeleteByIdsDto, UpsertChatForUserDto } from './dto';
 import { GetUserFromCookie } from './decorators';
 import { IChatShortInfo } from './interfaces';
+import { ServerResponseHelper } from 'src/shared/utils';
 
 @ApiTags('chat')
 @Controller('chat')
@@ -29,41 +30,43 @@ export class ChatsController {
   async upsert(
     @Body() params: UpsertChatForUserDto,
     @GetUserFromCookie() curentUser: IUserCookie,
-  ): Promise<IChatShortInfo> {
+  ): Promise<IServerResponse<IChatShortInfo>> {
     const upsertedId = await this.chatsService.upsertOneForUser(
       curentUser.id,
       params,
     );
     const foundChat = await this.chatsService.findById(upsertedId);
-    return {
+    return ServerResponseHelper.createSuccessResponse<IChatShortInfo>({
       id: foundChat._id,
       title: foundChat.title,
       type: foundChat.type,
       users: foundChat.users,
-    };
+    });
   }
 
   @Get('/user/list')
   async chatsForUser(
     @GetUserFromCookie() curentUser: IUserCookie,
-  ): Promise<IChatShortInfo[]> {
+  ): Promise<IServerResponse<IChatShortInfo[]>> {
     const foundChats = await this.chatsService.findByUserId(curentUser.id);
-    return foundChats.map((val) => {
-      return {
-        id: val._id,
-        title: val.title,
-        type: val.type,
-        users: val.users,
-      };
-    });
+    return ServerResponseHelper.createSuccessResponse<IChatShortInfo[]>(
+      foundChats.map((val) => {
+        return {
+          id: val._id,
+          title: val.title,
+          type: val.type,
+          users: val.users,
+        };
+      }),
+    );
   }
 
   @Delete('/user/by-ids')
   @HttpCode(200)
   async deleteByIds(
     @Query(new ValidationPipe({ transform: true })) params: DeleteByIdsDto,
-  ): Promise<void> {
+  ): Promise<IServerResponse<void>> {
     this.chatsService.deleteByIds(params);
-    return;
+    return ServerResponseHelper.createSuccessResponse<void>();
   }
 }

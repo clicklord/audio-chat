@@ -1,8 +1,9 @@
 import { Body, Controller, Get, HttpCode, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { IServerResponse } from 'src/shared/interface';
 
-import { CookieHelper } from 'src/shared/utils';
+import { CookieHelper, ServerResponseHelper } from 'src/shared/utils';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto, RegisterDto } from './dto';
 
@@ -19,14 +20,14 @@ export class AuthController {
   async register(
     @Res({ passthrough: true }) response: FastifyReply,
     @Body() params: RegisterDto,
-  ): Promise<string> {
+  ): Promise<IServerResponse<string>> {
     const newUser = await this.usersService.registerNewUser(params);
     this.cookieHelper.setUserCookie(response, {
       id: newUser._id,
       login: newUser.login,
     });
 
-    return newUser._id;
+    return ServerResponseHelper.createSuccessResponse<string>(newUser._id);
   }
 
   @Post('login')
@@ -34,7 +35,7 @@ export class AuthController {
   async logIn(
     @Res({ passthrough: true }) response: FastifyReply,
     @Body() params: LoginDto,
-  ): Promise<string> {
+  ): Promise<IServerResponse<string>> {
     const newUser = await this.usersService.findByLogin(params.login);
 
     this.cookieHelper.setUserCookie(response, {
@@ -42,16 +43,16 @@ export class AuthController {
       login: newUser.login,
     });
 
-    return newUser._id;
+    return ServerResponseHelper.createSuccessResponse<string>(newUser._id);
   }
 
   @Get('logout')
   @HttpCode(200)
   async logOut(
     @Res({ passthrough: true }) response: FastifyReply,
-  ): Promise<void> {
+  ): Promise<IServerResponse<void>> {
     this.cookieHelper.clearUserCookie(response);
 
-    return;
+    return ServerResponseHelper.createSuccessResponse<void>();
   }
 }

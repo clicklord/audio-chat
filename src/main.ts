@@ -7,12 +7,16 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyCookie from 'fastify-cookie';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './shared/exceptionsFilters';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      logger: true,
+    }),
   );
+  app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

@@ -4,6 +4,8 @@ services:
     container_name: mongodb
     env_file:
       - .env
+    ports:
+      - 127.0.0.1:${DC_MONGO_PORTS}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DC_MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DC_MONGO_PASS}

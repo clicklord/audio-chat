@@ -2,10 +2,11 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { USER_COOKIE_NAME } from '../config';
+import { ServerResponseHelper } from '../utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,7 +15,10 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     if (!request.cookies[USER_COOKIE_NAME]) {
-      throw new UnauthorizedException();
+      ServerResponseHelper.createFailedResponse(
+        'Invalid cookie',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     return true;
   }
