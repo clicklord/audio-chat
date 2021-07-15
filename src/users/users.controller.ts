@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IServerResponse } from 'src/shared/interface';
 import { ServerResponseHelper } from 'src/shared/utils';
 
-import { FindAllByIdsDto } from './dto';
+import { FindAllByIdsDto, SearchByNameDto } from './dto';
 import { UserShortInfo } from './interfaces';
 import { UsersService } from './users.service';
 
@@ -18,6 +18,15 @@ export class UsersController {
   ): Promise<IServerResponse<UserShortInfo[]>> {
     return ServerResponseHelper.createSuccessResponse<UserShortInfo[]>(
       await this.usersService.findByIds(params),
+    );
+  }
+
+  @Get('search')
+  async searchUsers(
+    @Query(ValidationPipe) params: SearchByNameDto,
+  ): Promise<IServerResponse<UserShortInfo[]>> {
+    return ServerResponseHelper.createSuccessResponse<UserShortInfo[]>(
+      await this.usersService.searchUsers(params),
     );
   }
 }

@@ -11,7 +11,7 @@ export type UserDocument = User & Document;
   },
 })
 export class User {
-  @Prop({ required: true })
+  @Prop({ type: String, text: true, required: true })
   name: string;
 
   @Prop({ required: true, unique: true })
@@ -22,3 +22,5 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.path('name').index({ text: true });

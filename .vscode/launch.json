@@ -7,7 +7,7 @@
     {
       "name": "Debug via NPM",
       "request": "launch",
-      "runtimeArgs": ["run", "start:dev"],
+      "runtimeArgs": ["run", "start"],
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node"
