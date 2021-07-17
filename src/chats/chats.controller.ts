@@ -50,14 +50,12 @@ export class ChatsController {
   ): Promise<IServerResponse<IChatShortInfo[]>> {
     const foundChats = await this.chatsService.findByUserId(curentUser.id);
     return ServerResponseHelper.createSuccessResponse<IChatShortInfo[]>(
-      foundChats.map((val) => {
-        return {
-          id: val._id,
-          title: val.title,
-          type: val.type,
-          users: val.users,
-        };
-      }),
+      foundChats.map(val => ({
+        id: val._id,
+        title: val.title,
+        type: val.type,
+        users: val.users,
+      })),
     );
   }
 
