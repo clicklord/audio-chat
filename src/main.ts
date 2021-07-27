@@ -6,7 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyCookie from 'fastify-cookie';
-import { join } from 'path';
+
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './shared/exceptionsFilters';
 

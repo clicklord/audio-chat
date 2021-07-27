@@ -1,8 +1,8 @@
 import { Body, Controller, Get, HttpCode, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
-import { IServerResponse } from 'src/shared/interface';
 
+import { IServerResponse } from 'src/shared/interface';
 import { CookieHelper, ServerResponseHelper } from 'src/shared/utils';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto, RegisterDto } from './dto';

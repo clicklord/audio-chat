@@ -1,8 +1,8 @@
 import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
 import { IServerResponse } from 'src/shared/interface';
 import { ServerResponseHelper } from 'src/shared/utils';
-
 import { FindAllByIdsDto, SearchByNameDto } from './dto';
 import { UserShortInfo } from './interfaces';
 import { UsersService } from './users.service';
