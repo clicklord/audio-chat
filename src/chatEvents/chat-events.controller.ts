@@ -32,7 +32,10 @@ export class ChatEventsController {
     const userKeys = foundChat.activeUsers
       .filter(val => val.userId !== curentUser.id)
       .map(val => val.userKey);
-    this.chatEventsGateway.sendToClientList(userKeys, params.data);
+    this.chatEventsGateway.sendToClientList(userKeys, {
+      chatId: params.chatId,
+      data: params.data,
+    });
     return ServerResponseHelper.createSuccessResponse<null>(null);
   }
 }

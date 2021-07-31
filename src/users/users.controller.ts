@@ -12,7 +12,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get('list')
+  @Get('by-ids')
   async userList(
     @Query(ValidationPipe) params: FindAllByIdsDto,
   ): Promise<IServerResponse<UserShortInfo[]>> {
@@ -21,7 +21,7 @@ export class UsersController {
     );
   }
 
-  @Get('search')
+  @Get('search-by-name')
   async searchUsers(
     @Query(ValidationPipe) params: SearchByNameDto,
   ): Promise<IServerResponse<UserShortInfo[]>> {

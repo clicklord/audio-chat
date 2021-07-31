@@ -25,7 +25,7 @@ import { ServerResponseHelper } from 'src/shared/utils';
 export class ChatsController {
   constructor(private chatsService: ChatsService) {}
 
-  @Post('/user/upsert')
+  @Post('/upsert')
   @HttpCode(200)
   async upsert(
     @Body() params: UpsertChatForUserDto,
@@ -44,7 +44,7 @@ export class ChatsController {
     });
   }
 
-  @Get('/user/list')
+  @Get('/by-participant')
   async chatsForUser(
     @GetUserFromCookie() curentUser: IUserCookie,
   ): Promise<IServerResponse<IChatShortInfo[]>> {
@@ -59,7 +59,7 @@ export class ChatsController {
     );
   }
 
-  @Delete('/user/by-ids')
+  @Delete('/by-ids')
   @HttpCode(200)
   async deleteByIds(
     @Query(new ValidationPipe({ transform: true })) params: DeleteByIdsDto,
