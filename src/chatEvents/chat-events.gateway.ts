@@ -13,6 +13,7 @@ import { ChatsService } from 'src/chats/chats.service';
 import { IServerResponse, IUserCookie } from 'src/shared/interface';
 import { AuthGuard } from 'src/shared/guards';
 import { USER_COOKIE_NAME } from 'src/shared/config';
+import { CookieHelper } from 'src/shared/utils';
 
 @Injectable()
 @UseGuards(AuthGuard)
@@ -27,7 +28,10 @@ import { USER_COOKIE_NAME } from 'src/shared/config';
   },
 })
 export class ChatEventsGateway implements OnGatewayDisconnect {
-  constructor(private chatsService: ChatsService) {}
+  constructor(
+    private chatsService: ChatsService,
+    private cookieHelper: CookieHelper,
+  ) {}
 
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('AppGateway');
@@ -74,12 +78,9 @@ export class ChatEventsGateway implements OnGatewayDisconnect {
       return;
     }
 
-    this.sendToClientList(
-      [client.id],
-      {
-        event: WSEvents.connectToChat,
-      },
-    );
+    this.sendToClientList([client.id], {
+      event: WSEvents.connectToChat,
+    });
   }
 
   @SubscribeMessage(WSEvents.disconnectFromChat)
@@ -106,12 +107,9 @@ export class ChatEventsGateway implements OnGatewayDisconnect {
       );
       return;
     }
-    this.sendToClientList(
-      [client.id],
-      {
-        event: WSEvents.disconnectFromChat,
-      },
-    );
+    this.sendToClientList([client.id], {
+      event: WSEvents.disconnectFromChat,
+    });
   }
 
   handleDisconnect(client: Socket) {
@@ -157,6 +155,6 @@ export class ChatEventsGateway implements OnGatewayDisconnect {
     if (!cookieData) {
       return cookieData;
     }
-    return (JSON.parse(cookieData) as IUserCookie).id;
+    return this.cookieHelper.getCookiePayload(cookieData)?.id ?? null;
   }
 }

@@ -9,7 +9,7 @@ import * as cookie from 'cookie';
 import { Observable } from 'rxjs';
 
 import { USER_COOKIE_NAME } from '../config';
-import { ServerResponseHelper } from '../utils';
+import { CookieHelper, ServerResponseHelper } from '../utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -34,11 +34,28 @@ export class AuthGuard implements CanActivate {
         error: 'Invalid cookie',
       });
     }
+
+    const tokenPayload = new CookieHelper().verifyToken(cookies[USER_COOKIE_NAME]);
+    if (!tokenPayload) {
+      throw new WsException({
+        success: false,
+        data: null,
+        error: 'Invalid cookie',
+      });
+    }
   }
 
   parseHttpCookie(context: ExecutionContext) {
     const cookies = context.switchToHttp().getRequest().cookies;
     if (!cookies || !cookies[USER_COOKIE_NAME]) {
+      ServerResponseHelper.createFailedResponse(
+        'Invalid cookie',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const tokenPayload = new CookieHelper().verifyToken(cookies[USER_COOKIE_NAME]);
+    if (!tokenPayload) {
       ServerResponseHelper.createFailedResponse(
         'Invalid cookie',
         HttpStatus.UNAUTHORIZED,

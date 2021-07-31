@@ -12,13 +12,6 @@ export class ServerResponseHelper {
   }
 
   static createFailedResponse(msg: string, errorCode?: number) {
-    throw new HttpException(
-      {
-        success: false,
-        data: null,
-        error: msg,
-      },
-      errorCode ?? HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+    throw new HttpException(msg, errorCode ?? HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
