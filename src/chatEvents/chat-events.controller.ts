@@ -34,6 +34,7 @@ export class ChatEventsController {
       .map(val => val.userKey);
     this.chatEventsGateway.sendToClientList(userKeys, {
       chatId: params.chatId,
+      fromUserId: curentUser.id,
       data: params.data,
     });
     return ServerResponseHelper.createSuccessResponse<null>(null);
